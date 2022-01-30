@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{% static 'prf.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+  
+</head>
+<body>
+    {% for p in prof %}
+      <div class="prffff">
+          {% if p.user.is_Doctor %}
+          <h3 style="text-align: center; font-size: 20px;">User Type: Doctor</h3>
+          {% else %}
+          <h3 style="text-align: center; font-size: 20px;">User Type: Patient</h3>
+          {% endif %}
+          <div class="pfpic">
+            <img src="{{ p.imgp.url }}" height="130px" width="130px"> 
+            <label class="nlable">Profile photo</label>
+          </div>
+          <div class="detlas">
+            <label class="nlable">Name:</label>
+            <input id="first_name" class="name" type="text" name="f_name" placeholder="First Name" value="{{ p.fstname }}" disabled>
+            <input id="last_name" class="name" type="text" name="l_name" placeholder="Last Name" value="{{ p.secname }}" disabled>
+            <label class="nlable">Username:</label>
+            <input id="user_name" class="user_name" type="text" name="u_name" placeholder="Username" value="{{ p.u_nm }}" disabled>
+            <label class="nlable">Email:</label>
+            <input id="mails" class="Email" type="email" name="mmail" placeholder="Email" value="{{ p.terimail }}" disabled>
+            <label class="nlable">Address:</label>
+            <input id="fburl" class="fburl" name="mmail" placeholder="Fb url" value="{{ p.address1 }}" disabled>
+            <label class="nlable">Pincode:</label>
+            <input id="pincode" class="fburl" name="pincode" placeholder="Pincode" value="{{ p.pincode }}" disabled>
+            <label class="nlable">State</label>
+            <input id="fburl" class="fburl" name="mmail" placeholder="Fb url" value="{{ p.state }}" disabled>
+            <label class="nlable">City</label>
+            <input id="fburl" class="fburl" name="mmail" placeholder="Fb url" value="{{ p.city }}" disabled>
+            <label class="nlable">Date Joined:</label>
+            <input id="fburl" class="fburl" name="mmail" placeholder="Fb url" value="{{ p.timestamp  }}" disabled>
+          </div>
+      </div>
+      {% endfor %}
+        <a href="logout/" style="display: block;
+        margin: auto;
+        margin-top: 20px;
+        width: 32%;
+        font-size: 25px;">logout</a>
+</body>
+<script>
+  x=document.getElementById('first_name').value
+  y=document.getElementById('last_name').value
+  b= document.getElementById('fburl').value
+  
+
+  function callcancel(){
+    document.getElementById('btnup').style.display='inline-block';
+    document.getElementById('btnup2').style.display='none';
+    document.getElementById('btnup4').style.display='none';
+    document.getElementById('upload-container').style.display="none";
+    document.getElementById('szeist').style.display="none";
+
+    document.getElementById('first_name').disabled=true
+    document.getElementById('last_name').disabled=true
+    document.getElementById('fburl').disabled=true
+
+    document.getElementById('first_name').value=x
+    document.getElementById('last_name').value=y
+    document.getElementById('fburl').value=b
+  }
+  function callsave(){
+    document.getElementById('btnup').style.display='none';
+    document.getElementById('btnup2').style.display='inline-block';
+    document.getElementById('btnup4').style.display='inline-block';
+    document.getElementById('upload-container').style.display="block";
+    document.getElementById('szeist').style.display="block";
+
+    document.getElementById('first_name').disabled=false
+    document.getElementById('last_name').disabled=false
+    document.getElementById('fburl').disabled=false
+    
+  }
+</script>
+</html>

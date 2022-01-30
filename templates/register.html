@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'style2.css' %}">
+</head>
+<body>
+    <form action="register" method="POST">
+        {% csrf_token %}
+        <div class="dabba">
+            <input class="name" type="text" name="f_name" placeholder="First Name">
+            <input class="name" type="text" name="l_name" placeholder="Last Name">
+            <input class="user_name" type="text" name="u_name" placeholder="Username">
+            <input class="Email" type="email" name="mmail" placeholder="Email">
+            <input class="pass" type="password" name="pass" placeholder="Password">
+            <input class="pass" type="password" name="pass1" placeholder="Password again">
+            <button type="submit">Register</button>
+        </div>
+    </form>
+    {% for message in messages %}
+    <h3>{{ message }}</h3>
+    {% endfor %}
+</body>
+</html>
