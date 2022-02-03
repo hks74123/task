@@ -5,46 +5,69 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes_App</title> 
+    <title>Login Here</title>
     <link rel="stylesheet" href="{% static 'navbar.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'style3.css' %}">
+    <link rel="stylesheet" href="{% static 'style2.css' %}">
+    <script src="{% static 'state.js' %}"></script>
 </head>
 <body>
-    <nav>
-        <input type="checkbox" id="check">
-        <label for="check" class="checkbtn">
-          <i class="fas fa-bars"></i>
-        </label>
-        <label class="logo">NoteX</label>
-        <ul>
-        {% if user.is_authenticated %}
-        <li><a href="createnote">Create Note</a></li>
-        <li><a href="show">Explore</a></li>
-        <li id="nm">hello {{ user.first_name }}</li>
-        <li><a href="logout">Logout</a></li>
-        {% else %}
-        <li><a href="/">Home</a></li>
-        <li><a href="createnote">Create Note</a></li>
-        <li><a href="show">Explore</a></li>
-        <li><a href="register">Register</a></li>
-        <li><a href="login">Login</a></li>
-        {% endif %}
-        </ul>
-      </nav>
-    <form action="createpost" method="POST">
+  <h2 id="usertype" style="text-align: center;margin-top: 30px;"></h2>
+  {% for message in messages %}
+    <h3>{{ message }}</h3>
+    {% endfor %}
+    <button style="width: 200px;border-radius: 8px; height: 35px;display: block;margin: auto;font-size: 17px;
+    background: rgb(17, 129, 194);
+    color: white;
+    cursor: pointer;"><a style="display: block;
+width: 100%;
+height: 35px;
+padding-top: 6px;" href="/my_blog/">My blogs</a></button>
+    <form action="/create_blog/" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-    <div class="part1">
-        <h3>Note Title:</h3>
-        <input type="text" name="title">
-        <h3>Note Tag:</h3>
-        <textarea name="tags"></textarea>
-    </div>
-    <div class="part2">
-        <h3>Your Note:</h3>
-        <textarea name="note"></textarea>
-        <button type="submit" value="mynt">Add Note</button>
-    </div>
-</form>
+        <div class="dabba" id="lgnbox">
+            <input class="user_name" type="text" name="title" placeholder="Title">
+            <div id="upload-container">
+                <div id="upload-border">
+                  <nobr>
+                    <input type="text" id="upload-name" placeholder="Profile photo" disabled="true" />
+                    <button id="upload-button" type="button">Select blog photo</button>
+                  </nobr>
+                </div>
+                <input type="file" id="hidden-upload" name="imgle" style="display:none"/> 
+              </div>
+              <select name="catge" style="display: block;width: 40%;margin: auto;background-color: white;font-size: 18px;border-radius: 5px;">
+                  <option value="none">Select blog Category</option>
+                  <option value="Mental Health">Mental Health</option>
+                  <option value="Physical Health">Physical Health</option>
+                  <option value="Heart disease">Heart disease</option>
+                  <option value="Covid">Covid</option>
+              </select>
+              <label style="margin-left: 15%;margin-top: 10px;">Summary</label>
+              <textarea style="display: block;width: 70%;margin: auto;margin-top: 20px;height: 30px;" name="summary"></textarea>
+              <label style="margin-left: 15%;margin-top: 10px;">Content</label>
+              <textarea style="display: block;width: 70%;margin: auto;margin-top: 20px;height: 190px;" name="content"></textarea>
+              <input type="checkbox" name='draft' style="margin-left:15%;cursor: pointer;">
+              <label>Save as draft</label>
+              <button type="submit" style="display: block !important;">Create blog</button>   
+        </div>
+    </form>
+
+     
 </body>
-</html>
+<script> 
+  document.querySelector("#upload-button").addEventListener("click", () => {
+  //clicks on the file input
+  document.querySelector("#hidden-upload").click();
+});
+
+//adds event listener on the hidden file input to listen for any changes
+document.querySelector("#hidden-upload").addEventListener("change", (event) => {
+  //gets the file name
+  document.querySelector("#upload-name").value = event.target.files[0].name;
+});
+    
+    
+</script>
+</html> 

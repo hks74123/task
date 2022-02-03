@@ -9,4 +9,7 @@ urlpatterns = [
     path('register/<slug:pid>/',views.register),
     path('login/<slug:pid>/',views.login),
     path('logout/',views.logout),
+    path('create_blog/',views.create_blog),
+    path('my_blog/',views.my_blog),
+    path('see_blog/<slug:pid>/',views.see_blog),
 ]

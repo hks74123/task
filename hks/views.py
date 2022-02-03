@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.core.checks import messages
 import datetime
 from datetime import timezone
-from hks.models import User1, profile_details 
+from hks.models import User1, blog, profile_details 
 # Create your views here.
 from django.contrib import messages
 from django.contrib.auth.models import auth
@@ -12,14 +12,20 @@ from django.shortcuts import redirect, render,HttpResponse
 
 def home(request):
     if request.user.is_authenticated:
-        get_prof=profile_details.objects.filter(user=request.user)
-        return render(request,'done.html',{"prof":get_prof})
+        if(request.user.is_Doctor):
+            return render(request,'index.html')
+        else:
+            bg=blog.objects.filter(category='Mental Health').exclude(as_draft=True)
+            bg1=blog.objects.filter(category='Physical Health').exclude(as_draft=True)
+            bg2=blog.objects.filter(category='Heart disease').exclude(as_draft=True)
+            bg3=blog.objects.filter(category='Covid').exclude(as_draft=True)
+            return render(request,'patsee.html',{'bg':bg,'bg1':bg1,'bg2':bg2,'bg3':bg3})
     else:
         return render(request,'home.html') 
 
 def docsign(request):
     if request.user.is_authenticated:
-         return render(request,'dashboard.html')
+         return render(request,'done.html')
     else:
         user='Doctor'
         hks=0
@@ -27,7 +33,7 @@ def docsign(request):
 
 def patsign(request):
     if request.user.is_authenticated:
-         return render(request,'dashboard.html')
+         return render(request,'done.html')
     else:
         user='Patient'
         hks=0
@@ -126,6 +132,62 @@ def logout(request):
     if request.user.is_authenticated:
         auth.logout(request)
         return redirect('/')
+    else:
+        user='Doctor'
+        hks=0
+        return render(request,'login.html',{'type':user,'hks':hks})
+
+def create_blog(request):
+    if request.user.is_authenticated:
+        if request.method=='POST':
+            get_prof=profile_details.objects.get(user=request.user)
+            if(request.user.is_Doctor):
+                title=request.POST.get('title')
+                catge=request.POST.get('catge')
+                summary=request.POST.get('summary')
+                content=request.POST.get('content')
+                is_draft=request.POST.get('draft')
+                if(title=='' or catge=='none' or summary=='' or content==''):
+                    messages.error(request,'Please fill out all fields!!')
+                    return render(request,'index.html')
+                elif(len(request.FILES)==0):
+                    messages.error(request,'Please upload blog pic !!')
+                    return render(request,'index.html')
+                else:
+                    pos=blog.objects.create(author=get_prof,title=title,image=request.FILES['imgle'],category=catge,summary=summary,content=content)
+                    if(is_draft=='on'):
+                        pos.as_draft=True
+                    pos.save()
+                    messages.info(request,'Done!!')
+                    return render(request,'index.html')
+            else:
+                return redirect('/')
+    else:
+        user='Doctor'
+        hks=0
+        return render(request,'login.html',{'type':user,'hks':hks})
+
+def my_blog(request):
+    if request.user.is_authenticated:
+        get_prof=profile_details.objects.get(user=request.user)
+        if(request.user.is_Doctor):
+            blg=blog.objects.filter(author=get_prof)
+            return render(request,'my_blog.html',{'bg':blg})
+        else:
+            return redirect('/')
+    else:
+        user='Doctor'
+        hks=0
+        return render(request,'login.html',{'type':user,'hks':hks})
+
+def see_blog(request,pid):
+    if request.user.is_authenticated:
+        get_prof=profile_details.objects.get(user=request.user)
+        if(request.user.is_Doctor):
+            blg=blog.objects.filter(id=pid)
+            return render(request,'see_blog.html',{'bg':blg})
+        else:
+            return redirect('/')
     else:
         user='Doctor'
         hks=0

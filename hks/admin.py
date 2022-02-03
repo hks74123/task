@@ -36,3 +36,4 @@ class UserAdmin(BaseUserAdmin):
             },
         ),]
 admin.site.register(models.profile_details)
+admin.site.register(models.blog)
