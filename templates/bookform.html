@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Here</title>
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'style3.css' %}">
+    <link rel="stylesheet" href="{% static 'style2.css' %}">
+    <script src="{% static 'state.js' %}"></script>
+</head>
+<body>
+  <h2 id="usertype" style="text-align: center;margin-top: 30px;"></h2>
+  {% for message in messages %}
+    <h3>{{ message }}</h3>
+    {% endfor %}
+    <form action="/Book_appointment/{{ pid }}/" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h3>Fill out details</h3>
+        <div class="dabba" id="lgnbox">
+            <select name="catge" style="display: block;width: 40%;margin: auto;background-color: white;font-size: 18px;border-radius: 5px;margin-top: 15px ;">
+                <option value="none">Required speciality</option>
+                <option value="Mental Health">Mental Health</option>
+                <option value="Physical Health">Physical Health</option>
+                <option value="Heart disease">Heart disease</option>
+                <option value="Covid">Covid</option>
+            </select>
+            <div class="datee" style="width: 60%; margin: auto;">
+            <label>Date:</label>
+            <input type="date" id="appointmentd" name="dapp">
+        </div>
+        <div class="timee"style="width: 60%; margin: auto;">   
+            <label>Start Time:</label>
+            <input type="time" id="appt" name="stime"></div>
+            <button type="submit">Confirm</button>  
+        </div>
+    </form>
+     
+</body>
+</html>

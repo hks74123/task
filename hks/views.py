@@ -1,25 +1,57 @@
 
+from audioop import add
 import email
 from django.shortcuts import render
 from django.core.checks import messages
 import datetime
 from datetime import timezone
+from google_apis import create_service
 from hks.models import User1, blog, profile_details 
 # Create your views here.
 from django.contrib import messages
 from django.contrib.auth.models import auth
 from django.shortcuts import redirect, render,HttpResponse
+from pprint import pprint
+import datetime
+from datetime import timedelta
+
+# from Google import Create_Service
+
+import os.path
+
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from Google import Create_Service,convert_to_RFC_datetime
+
+CLIENT_SECRET_FILE='client_secret_829581601635-ksh2dthh7pqvrrobiusl78oou67jljlv.apps.googleusercontent.com.json'
+
+API_NAME='calendar'
+API_VERSION='v3'
+SCOPES=['https://www.googleapis.com/auth/calendar']
+service=Create_Service(CLIENT_SECRET_FILE,API_NAME,API_VERSION,SCOPES)
+colors=service.colors().get().execute()
+
+# flow = InstalledAppFlow.from_client_secrets_file("client_secret_829581601635-ksh2dthh7pqvrrobiusl78oou67jljlv.apps.googleusercontent.com.json", scopes=SCOPES)
+# credentials = flow.run_console() 
+
+calender_id='mmiufbonu5iqrahhgcd3d64ut8@group.calendar.google.com'
+
+ 
 
 def home(request):
     if request.user.is_authenticated:
         if(request.user.is_Doctor):
             return render(request,'index.html')
         else:
-            bg=blog.objects.filter(category='Mental Health').exclude(as_draft=True)
-            bg1=blog.objects.filter(category='Physical Health').exclude(as_draft=True)
-            bg2=blog.objects.filter(category='Heart disease').exclude(as_draft=True)
-            bg3=blog.objects.filter(category='Covid').exclude(as_draft=True)
-            return render(request,'patsee.html',{'bg':bg,'bg1':bg1,'bg2':bg2,'bg3':bg3})
+            albg=profile_details.objects.all()
+            bg=[]
+            for i in albg:
+                if(i.user.is_Doctor==True):
+                    bg.append(i)
+            return render(request,'docviews.html',{'bg':bg})
     else:
         return render(request,'home.html') 
 
@@ -191,4 +223,70 @@ def see_blog(request,pid):
     else:
         user='Doctor'
         hks=0
-        return render(request,'login.html',{'type':user,'hks':hks})
+        return render(request,'login.html',{'type':user,'hks':hks}) 
+
+
+def create(start_time,end_time,docmail,patmail,date):
+        # Refer to the Python quickstart on how to setup the environment:
+    # https://developers.google.com/calendar/quickstart/python
+    # Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
+    # stored credentials.
+
+    event = {
+    'start': {
+        'dateTime': convert_to_RFC_datetime(int(date[:4]),int(date[5:7]),int(date[8:]),(int(start_time[:2])-5),int(start_time[3:])),
+        'timeZone': 'IST',
+    },
+    'end': {
+        'dateTime': convert_to_RFC_datetime(int(date[:4]),int(date[5:7]),int(date[8:]),(int(end_time[:2])-5),int(end_time[3:])),
+        'timeZone': 'IST',
+    },
+    'attendees': [
+    {'email': docmail},
+    {'email': patmail},
+  ],
+
+    'description':'Appointment fixed '
+    } 
+    event = service.events().insert(calendarId=calender_id, body=event).execute()
+    
+
+def booking_form(request,pid):
+    if request.user.is_authenticated:
+        get_prof=profile_details.objects.get(user=request.user)
+        if(request.user.is_Patient):
+            return render(request,'bookform.html',{'pid':pid})  
+        else:
+            redirect('/')
+    else:
+        redirect('/')
+
+def Book_appointment(request,pid):
+    if request.user.is_authenticated:
+        get_prof=profile_details.objects.get(user=request.user)
+        get_doc=profile_details.objects.get(id=pid)
+        doc_name=get_doc.fstname+get_doc.secname
+        if(request.user.is_Patient):
+            get_doc=profile_details.objects.get(id=pid)
+            docmail=get_doc.terimail
+            patmail=get_prof.terimail
+            start_time=request.POST.get('stime') 
+            date=request.POST.get('dapp')
+            if(int(start_time[3:])-30<=0):
+                start_time1=str(int(start_time[:2])-1)+':'+str(30+int(start_time[3:]))
+            else:
+                start_time1=str(int(start_time[:2])-1)+':'+str(int(start_time[3:])-30)
+            addi=int(start_time1[3:])+45
+            if( addi >= 60):
+                end_time=str(int(start_time1[:2])+1)+':'+str(addi-60)
+            else:
+                end_time=(start_time1[:2])+':'+str(addi)
+            addi=int(start_time[3:])+45
+            if( addi >= 60):
+                end_time1=str(int(start_time[:2])+1)+':'+str(addi-60)
+            else:
+                end_time1=(start_time[:2])+':'+str(addi)
+            print(date[:4],date[5:7],date[8:])
+            create(start_time1,end_time,docmail,patmail,date)
+            return render(request,'apointment_detail.html',{'nm':doc_name,'stime':start_time,'etime':end_time1,'dt':date})
+    

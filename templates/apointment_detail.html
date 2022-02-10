@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Here</title>
+    <link rel="stylesheet" href="{% static 'navbar.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="{% static 'style3.css' %}">
+    <link rel="stylesheet" href="{% static 'style2.css' %}">
+    <script src="{% static 'state.js' %}"></script>
+</head>
+<body>
+  <h2 id="usertype" style="text-align: center;margin-top: 30px;"></h2>
+  {% for message in messages %}
+    <h3>{{ message }}</h3>
+    {% endfor %}
+        <h3>Appointment details</h3>
+        <div class="dabba" id="lgnbox">
+            <div class="timee"style="width: 60%; margin: auto;">  
+            <label>Docotor:</label>
+            <input type="text" value="{{ nm }}" disabled="True"></div>
+            <div class="datee" style="width: 60%; margin: auto;">
+            <label>Date:</label>
+            <input type="text" id="appointmentd" name="dapp" value="{{ dt }}" disabled="True">
+        </div>
+        <div class="timee"style="width: 60%; margin: auto;">   
+            <label>Start Time:</label>
+            <input type="text" id="appt" name="stime" value="{{ stime }}" disabled="True"></div> 
+        <div class="timee"style="width: 60%; margin: auto;">   
+            <label>End Time:</label>
+            <input type="text" id="appt" name="stime" value="{{ etime }}" disabled="True"></div> 
+        </div>
+        
+     
+</body>
+</html> 
